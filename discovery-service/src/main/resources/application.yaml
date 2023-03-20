@@ -6,10 +6,13 @@ spring:
     name: discovery-service
   security:
     user:
-      name: admin
+      name: eureka
       password: admin
 
 eureka:
   client:
     fetch-registry: false
     register-with-eureka: false
+    eureka-server-port: 8761
+  instance:
+    hostname: localhost

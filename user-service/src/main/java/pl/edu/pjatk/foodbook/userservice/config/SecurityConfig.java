@@ -1,4 +1,4 @@
-package pl.edu.pjatk.foodbook.discoveryservice.config;
+package pl.edu.pjatk.foodbook.userservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +12,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf()
+        http.csrf()
             .disable()
             .authorizeHttpRequests()
             .anyRequest()
