@@ -3,6 +3,7 @@ package pl.edu.pjatk.foodbook.authservice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,68 +12,73 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.edu.pjatk.foodbook.authservice.swagger.user.api.UserControllerApiClient;
+import pl.edu.pjatk.foodbook.authservice.swagger.user.model.User;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
 public class AppConfig {
 
-//    TODO - user-service
-//    private final UserRepository userRepository;
+    private final UserControllerApiClient userApiClient;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> new UserDetails() {
+        return username -> Optional.ofNullable(userApiClient.getUserByUsername(username))
+                               .map(ResponseEntity::getBody)
+                               .map(AppConfig::mapToUserDetails)
+                               .orElseThrow(() -> new UsernameNotFoundException(
+                                   "User not found with given username: { " + username + " }"
+                               ));
+    }
+
+    private static UserDetails mapToUserDetails(User user) {
+        return new UserDetails() {
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
-                return List.of(new SimpleGrantedAuthority("USER"));
+                return user.getAuthorities().stream()
+                           .map(pl.edu.pjatk.foodbook.authservice.swagger.user.model.GrantedAuthority::getAuthority)
+                           .map(SimpleGrantedAuthority::new)
+                           .collect(Collectors.toList());
             }
 
             @Override
             public String getPassword() {
-                return "admin";
+                return user.getPassword();
             }
 
             @Override
             public String getUsername() {
-                return "admin";
+                return user.getUsername();
             }
 
             @Override
             public boolean isAccountNonExpired() {
-                return true;
+                return user.getAccountNonExpired();
             }
 
             @Override
             public boolean isAccountNonLocked() {
-                return true;
+                return user.getAccountNonLocked();
             }
 
             @Override
             public boolean isCredentialsNonExpired() {
-                return true;
+                return user.getCredentialsNonExpired();
             }
 
             @Override
             public boolean isEnabled() {
-                return true;
+                return user.getEnabled();
             }
         };
     }
-
-//    TODO need generated class of user
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return username -> userRepository
-//                               .findByUsername(username)
-//                               .orElseThrow(() -> new UsernameNotFoundException(
-//                                   "User not found with given username: { " + username + " }"
-//                               ));
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

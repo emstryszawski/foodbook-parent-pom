@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import pl.edu.pjatk.foodbook.authservice.swagger.user.model.NewRequestUser;
 
 import java.security.Key;
 import java.util.Date;
@@ -25,8 +26,8 @@ public class JwtService {
 
     @Autowired
     public JwtService(
-            @Value("${token.key}") String publicKey,
-            @Value("${token.expiration_time}") int tokenExpirationTime) {
+        @Value("${token.key}") String publicKey,
+        @Value("${token.expiration_time}") int tokenExpirationTime) {
         PUBLIC_KEY = publicKey;
         TOKEN_EXPIRATION_TIME = tokenExpirationTime;
     }
@@ -40,8 +41,8 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(NewRequestUser requestUser) {
+        return generateToken(new HashMap<>(), requestUser);
     }
 
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
@@ -57,22 +58,22 @@ public class JwtService {
         return extractClaim(jwtToken, Claims::getExpiration);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateToken(Map<String, Object> extraClaims, NewRequestUser requestUser) {
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                   .setClaims(extraClaims)
+                   .setSubject(requestUser.getUsername())
+                   .setIssuedAt(new Date(System.currentTimeMillis()))
+                   .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
+                   .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                   .compact();
     }
 
     private Claims extractAllClaims(String jwtToken) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(jwtToken)
-                .getBody();
+                   .setSigningKey(getSignInKey())
+                   .build()
+                   .parseClaimsJws(jwtToken)
+                   .getBody();
     }
 
     private Key getSignInKey() {
