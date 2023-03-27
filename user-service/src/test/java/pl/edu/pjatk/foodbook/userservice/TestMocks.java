@@ -29,8 +29,7 @@ public class TestMocks {
     private static User getUser() {
         return User.builder()
                    .id(UUID.randomUUID())
-                   .firstname("First Name")
-                   .lastname("Last Name")
+                   .realName("Firstname Lastname")
                    .username("username")
                    .password("*********")
                    .email("user@mail.com")

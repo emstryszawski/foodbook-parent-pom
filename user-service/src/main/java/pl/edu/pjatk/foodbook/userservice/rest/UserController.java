@@ -2,13 +2,16 @@ package pl.edu.pjatk.foodbook.userservice.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pjatk.foodbook.userservice.exception.AlreadyExistsException;
 import pl.edu.pjatk.foodbook.userservice.exception.NotFoundException;
 import pl.edu.pjatk.foodbook.userservice.repository.model.User;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.NewRequestUser;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.request.NewRequestUser;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserCreatedResponse;
 import pl.edu.pjatk.foodbook.userservice.rest.service.UserService;
 
 @RestController
@@ -29,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveUser(@RequestBody @Valid NewRequestUser user) {
-        userService.saveUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<UserCreatedResponse> saveUser(@RequestBody @Valid NewRequestUser user) throws AlreadyExistsException {
+        UserCreatedResponse response = userService.saveUser(user);
+        return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.CREATED);
     }
 }

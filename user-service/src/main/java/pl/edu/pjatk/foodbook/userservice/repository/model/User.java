@@ -23,10 +23,9 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String firstname;
-    private String lastname;
-    private String username;
     private String email;
+    private String username;
+    private String realName;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
