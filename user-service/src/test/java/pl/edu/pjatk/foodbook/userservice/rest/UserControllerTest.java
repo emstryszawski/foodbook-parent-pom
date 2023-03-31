@@ -1,6 +1,7 @@
 package pl.edu.pjatk.foodbook.userservice.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ class UserControllerTest {
         mockMvc = MockMvcBuilders
                       .webAppContextSetup(context)
                       .build();
-        objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         modelMapper = new ModelMapper();
     }
 

@@ -20,6 +20,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserCreatedResponse'
   /api/v1/{username}:
     get:
       tags:
@@ -47,18 +51,27 @@ components:
           type: string
         password:
           type: string
-        firstname:
-          type: string
-        lastname:
+        realName:
           type: string
         email:
           type: string
         role:
           type: string
-          enum:
-          - USER
-          - MODERATOR
-          - ADMIN
+    UserCreatedResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        realName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
     GrantedAuthority:
       type: object
       properties:
@@ -70,13 +83,11 @@ components:
         id:
           type: string
           format: uuid
-        firstname:
-          type: string
-        lastname:
+        email:
           type: string
         username:
           type: string
-        email:
+        realName:
           type: string
         password:
           type: string

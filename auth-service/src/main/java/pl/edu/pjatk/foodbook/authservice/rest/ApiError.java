@@ -1,4 +1,4 @@
-package pl.edu.pjatk.foodbook.userservice.rest;
+package pl.edu.pjatk.foodbook.authservice.rest;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

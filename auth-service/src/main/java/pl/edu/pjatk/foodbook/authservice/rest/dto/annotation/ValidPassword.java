@@ -1,8 +1,8 @@
-package pl.edu.pjatk.foodbook.userservice.rest.dto.annotations;
+package pl.edu.pjatk.foodbook.authservice.rest.dto.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.validator.PasswordConstraintValidator;
+import pl.edu.pjatk.foodbook.authservice.rest.dto.validator.PasswordConstraintValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

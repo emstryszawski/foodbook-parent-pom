@@ -1,9 +1,9 @@
-package pl.edu.pjatk.foodbook.userservice.rest.dto.validator;
+package pl.edu.pjatk.foodbook.authservice.rest.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.passay.*;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.annotations.ValidPassword;
+import pl.edu.pjatk.foodbook.authservice.rest.dto.annotation.ValidPassword;
 
 import java.util.Arrays;
 

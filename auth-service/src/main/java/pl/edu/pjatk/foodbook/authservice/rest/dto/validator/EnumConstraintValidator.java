@@ -1,8 +1,8 @@
-package pl.edu.pjatk.foodbook.userservice.rest.dto.validator;
+package pl.edu.pjatk.foodbook.authservice.rest.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.annotations.ValidEnum;
+import pl.edu.pjatk.foodbook.authservice.rest.dto.annotation.ValidEnum;
 
 import java.util.Set;
 import java.util.stream.Collectors;
