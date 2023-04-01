@@ -32,7 +32,7 @@ public class SecurityConfig {
             .requestMatchers(
                 AUTH_RESOURCE_PATH + "/register",
                 AUTH_RESOURCE_PATH + "/authenticate",
-                "swagger-ui/**") // TODO custom path to swagger
+                "/v3/api-docs/**")
             .permitAll()
             .anyRequest()
             .authenticated()
