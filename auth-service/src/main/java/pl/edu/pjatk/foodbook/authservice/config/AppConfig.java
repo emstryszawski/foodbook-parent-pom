@@ -1,6 +1,7 @@
 package pl.edu.pjatk.foodbook.authservice.config;
 
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.edu.pjatk.foodbook.authservice.swagger.user.api.UserControllerApiClient;
 import pl.edu.pjatk.foodbook.authservice.swagger.user.model.User;
 
+import java.security.Key;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
-@RequiredArgsConstructor
 public class AppConfig {
+
+    private final String PUBLIC_KEY;
+
+    public AppConfig(@Value("${foodbook.security.jwt.key}") String key,
+        UserControllerApiClient userApiClient) {
+        this.PUBLIC_KEY = key;
+        this.userApiClient = userApiClient;
+    }
 
     private final UserControllerApiClient userApiClient;
 
@@ -96,6 +105,12 @@ public class AppConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Key getSignInKey() {
+        byte[] keyBytes = PUBLIC_KEY.getBytes();
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 }

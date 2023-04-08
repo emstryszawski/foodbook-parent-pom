@@ -1,46 +1,34 @@
 package pl.edu.pjatk.foodbook.authservice.repository.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.*;
-import org.hibernate.Hibernate;
+import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
-@ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class Token {
-    @Id
-    @GeneratedValue
-    private Integer id;
+@MappedSuperclass
+public abstract class Token {
+    private boolean expired;
+    private boolean revoked;
+    private LocalDateTime expiredAt;
+    private LocalDateTime validUntil;
 
-    @Column(unique = true)
-    public String token;
+    public abstract boolean isValid();
 
-    public boolean revoked;
-
-    public boolean expired;
-
-    public UUID userId;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Token token = (Token) o;
-        return id != null && Objects.equals(id, token.id);
+    public boolean isExpired() {
+        expired = expiredAt != null || !ZonedDateTime.now(ZoneId.systemDefault()).isBefore(ZonedDateTime.of(validUntil, ZoneId.systemDefault()));
+        if (expired) {
+            expiredAt = expiredAt == null ? validUntil : expiredAt;
+        }
+        return expired;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+        expiredAt = LocalDateTime.now();
     }
 }
