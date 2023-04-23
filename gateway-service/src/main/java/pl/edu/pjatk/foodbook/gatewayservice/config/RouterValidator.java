@@ -1,4 +1,4 @@
-package pl.edu.pjatk.foodbook.gatewayservice.service;
+package pl.edu.pjatk.foodbook.gatewayservice.config;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,8 @@ public class RouterValidator {
 
     private static final List<String> unsecured = List.of(
         "auth/api/v1/auth/register",
-        "auth/api/v1/auth/authenticate"
+        "auth/api/v1/auth/authenticate",
+        "auth/api/v1/auth/validate-token"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

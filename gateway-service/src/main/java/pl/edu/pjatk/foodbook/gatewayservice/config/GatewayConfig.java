@@ -4,13 +4,14 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class GatewayConfig {
 
     private final AuthenticationFilter authFilter;
 
-    public GatewayConfig(AuthenticationFilter authFilter) {
+    public GatewayConfig(@Lazy AuthenticationFilter authFilter) {
         this.authFilter = authFilter;
     }
 

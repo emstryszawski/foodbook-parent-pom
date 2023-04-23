@@ -1,0 +1,138 @@
+openapi: 3.0.1
+info:
+  title: Auth API
+  description: API for user authentication & authorization
+  version: 0.0.1
+servers:
+- url: http://localhost:9000
+paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+      - auth-controller
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /api/v1/auth/refresh-token:
+    post:
+      tags:
+      - auth-controller
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /api/v1/auth/authenticate:
+    post:
+      tags:
+      - auth-controller
+      operationId: authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /api/v1/auth/validate-token:
+    get:
+      tags:
+      - auth-controller
+      operationId: validateToken
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+components:
+  schemas:
+    RegisterRequest:
+      required:
+      - email
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 48
+          minLength: 3
+          type: string
+        password:
+          type: string
+        firstname:
+          maxLength: 48
+          minLength: 2
+          type: string
+        lastname:
+          maxLength: 48
+          minLength: 2
+          type: string
+        email:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        username:
+          type: string
+        token:
+          type: string
+        tokenExpiresIn:
+          type: integer
+          format: int64
+        refreshToken:
+          type: string
+        refreshTokenExpiresIn:
+          type: integer
+          format: int64
+    RefreshTokenRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          format: uuid
+    AuthenticationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string

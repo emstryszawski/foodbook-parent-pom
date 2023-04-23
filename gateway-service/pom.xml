@@ -10,6 +10,11 @@
     <artifactId>gateway-service</artifactId>
     <name>Gateway service</name>
 
+    <properties>
+        <swagger.package>pl.edu.pjatk.foodbook.authservice.swagger</swagger.package>
+        <swagger.input.spec>${project.basedir}/src/main/resources/swagger</swagger.input.spec>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -45,5 +50,52 @@
         </dependency>
         <!--</JWT>-->
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>6.2.1</version>
+                <executions>
+                    <execution>
+                        <id>auth-service-api</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${swagger.input.spec}/auth-api-0.0.1.yml</inputSpec>
+
+                            <generatorName>spring</generatorName>
+                            <library>spring-cloud</library>
+
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+
+                            <modelPackage>${swagger.package}.auth.model</modelPackage>
+                            <apiPackage>${swagger.package}.auth.api</apiPackage>
+                            <invokerPackage>pl.edu.pjatk.foodbook.ignore</invokerPackage>
+
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <java8>true</java8>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <configPackage>pl.edu.pjatk.foodbook.ignore</configPackage>
+                                <useOptional>false</useOptional>
+                                <useSpringBoot3>true</useSpringBoot3>
+                            </configOptions>
+
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
