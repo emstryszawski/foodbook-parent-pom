@@ -42,10 +42,10 @@ public class AuthenticationFilter implements GatewayFilter {
                 return onError(exchange, "Authorization header/accessToken is missing");
             }
 
-            boolean isValid = authApi.validateToken(accessToken).getBody();
+            boolean isValid = Boolean.TRUE.equals(authApi.validateToken(accessToken).getBody());
 
             if (isValid) {
-                this.populateRequestWithAuthHeader(request, accessToken);
+                populateRequestWithAuthHeader(request, accessToken);
             } else {
                 return onError(exchange, "Authorization header is invalid");
             }
@@ -63,9 +63,8 @@ public class AuthenticationFilter implements GatewayFilter {
             .orElse(null);
     }
 
-    private void populateRequestWithAuthHeader(ServerHttpRequest request, String jwt) {
+    private static void populateRequestWithAuthHeader(ServerHttpRequest request, String jwt) {
         request.mutate()
-            .header("X-Forwarded-For", "localhost:8080")
             .header("Authorization", "Bearer " + jwt)
             .build();
     }

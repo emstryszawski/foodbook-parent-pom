@@ -21,8 +21,10 @@ public class GatewayConfig {
             .route("auth-service",
                 route -> route
                     .path("/auth/**")
-                    .filters(filter -> filter.filter(authFilter)
-                        .rewritePath("/auth/(?<path>.*)", "/$\\{path}"))
+                    .filters(filter -> filter
+                        .filter(authFilter)
+                        .rewritePath("/auth/(?<path>.*)", "/$\\{path}")
+                        .addRequestHeader("X-Gateway", "localhost:8080"))
                     .uri("lb://auth-service"))
             .build();
     }
