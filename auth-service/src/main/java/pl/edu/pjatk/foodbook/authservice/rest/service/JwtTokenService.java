@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -52,7 +53,7 @@ public class JwtTokenService {
 
         String username = user.getUsername();
         UUID userId = user.getId();
-        String jwt = generateJwtToken(username, tokenValid.toInstant());
+        String jwt = generateJwtToken(username, tokenValid.toInstant(), new HashMap<>());
 
         tokenService.revokeAll(userId);
 
@@ -71,10 +72,11 @@ public class JwtTokenService {
         return tokenService.save(accessToken);
     }
 
-    private String generateJwtToken(String subject, Instant expirationDate) {
+    private String generateJwtToken(String subject, Instant expirationDate, Map<String, ?> claims) {
         return Jwts.builder()
-            .setClaims(new HashMap<>())
+            .setClaims(claims)
             .setSubject(subject)
+            .setIssuer("foodbook-auth-service")
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(Date.from(expirationDate))
             .signWith(signInKey, SignatureAlgorithm.HS256)
@@ -93,7 +95,10 @@ public class JwtTokenService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("username {}", username);
 
-        return generateTokens(new User().id(userId).username(username));
+        return generateTokens(
+            new User()
+                .id(userId)
+                .username(username));
     }
 
     public void removeAll(String jwt) {

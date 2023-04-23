@@ -55,7 +55,7 @@ public class TokenService {
     }
 
     @Transactional
-    protected AccessToken getToken(String jwt) {
+    public AccessToken getToken(String jwt) {
         return accessTokenRepository
             .findByToken(jwt)
             .orElseThrow(() -> new TokenNotFoundException("No access token found"));

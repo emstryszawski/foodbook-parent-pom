@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.SneakyThrows;
-import org.modelmapper.ModelMapper;
 import pl.edu.pjatk.foodbook.authservice.rest.ApiError;
 import pl.edu.pjatk.foodbook.authservice.rest.exception.UserServiceClientException;
 
@@ -15,9 +14,6 @@ import java.nio.charset.Charset;
 import java.util.stream.Stream;
 
 public class UserServiceClientErrorDecoder implements ErrorDecoder {
-
-    private final ModelMapper modelMapper = new ModelMapper();
-
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @SneakyThrows

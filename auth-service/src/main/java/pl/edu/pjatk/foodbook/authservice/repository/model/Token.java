@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -20,11 +21,20 @@ public abstract class Token {
     public abstract boolean isValid();
 
     public boolean isExpired() {
-        expired = expiredAt != null || !ZonedDateTime.now(ZoneId.systemDefault()).isBefore(ZonedDateTime.of(validUntil, ZoneId.systemDefault()));
+        expired = expiredAt != null || !ZonedDateTime.now(
+            ZoneId.systemDefault()).isBefore(ZonedDateTime.of(validUntil, ZoneId.systemDefault())
+        );
         if (expired) {
             expiredAt = expiredAt == null ? validUntil : expiredAt;
         }
         return expired;
+    }
+
+    public Long expiresIn() {
+        return ChronoUnit.MILLIS.between(
+            ZonedDateTime.now(ZoneId.systemDefault()),
+            ZonedDateTime.of(validUntil, ZoneId.systemDefault())
+        );
     }
 
     public void setExpired(boolean expired) {
