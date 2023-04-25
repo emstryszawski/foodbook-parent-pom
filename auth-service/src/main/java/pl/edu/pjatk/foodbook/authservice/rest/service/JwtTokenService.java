@@ -53,7 +53,9 @@ public class JwtTokenService {
 
         String username = user.getUsername();
         UUID userId = user.getId();
-        String jwt = generateJwtToken(username, tokenValid.toInstant(), new HashMap<>());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", user.getAuthorities());
+        String jwt = generateJwtToken(username, tokenValid.toInstant(), claims);
 
         tokenService.revokeAll(userId);
 
