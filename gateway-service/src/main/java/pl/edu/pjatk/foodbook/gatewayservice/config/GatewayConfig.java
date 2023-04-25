@@ -34,6 +34,14 @@ public class GatewayConfig {
                         .rewritePath("/foodbook/(?<path>.*)", "/$\\{path}")
                         .addRequestHeader("X-Gateway", "localhost:8080"))
                     .uri("lb://foodbook-service"))
+            .route("recipe-service",
+                route -> route
+                    .path("/recipe/**")
+                    .filters(filter -> filter
+                        .filter(authFilter)
+                        .rewritePath("/recipe/(?<path>.*)", "/$\\{path}")
+                        .addRequestHeader("X-Gateway", "localhost:8080"))
+                    .uri("lb://recipe-service"))
             .build();
     }
 }
