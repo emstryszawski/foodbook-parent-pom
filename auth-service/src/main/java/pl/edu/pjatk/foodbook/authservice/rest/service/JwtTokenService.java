@@ -5,11 +5,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.pjatk.foodbook.authservice.repository.model.AccessToken;
 import pl.edu.pjatk.foodbook.authservice.repository.model.RefreshToken;
 import pl.edu.pjatk.foodbook.authservice.rest.exception.TokenNotFoundException;
+import pl.edu.pjatk.foodbook.authservice.swagger.user.model.GrantedAuthority;
 import pl.edu.pjatk.foodbook.authservice.swagger.user.model.User;
 
 import java.security.Key;
@@ -18,10 +20,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -94,13 +94,20 @@ public class JwtTokenService {
 
         AccessToken accessToken = tokenService.getAccessTokenByRefreshToken(refreshToken);
         UUID userId = accessToken.getUserId();
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        List<GrantedAuthority> authorities = authentication.getAuthorities()
+            .stream()
+            .map(grantedAuthority -> new GrantedAuthority().authority(grantedAuthority.getAuthority()))
+            .collect(Collectors.toList());
+
         log.info("username {}", username);
 
         return generateTokens(
             new User()
                 .id(userId)
-                .username(username));
+                .username(username)
+                .authorities(authorities));
     }
 
     public void removeAll(String jwt) {
