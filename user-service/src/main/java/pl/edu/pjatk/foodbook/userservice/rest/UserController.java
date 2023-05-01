@@ -4,36 +4,28 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import pl.edu.pjatk.foodbook.userservice.exception.AlreadyExistsException;
-import pl.edu.pjatk.foodbook.userservice.exception.NotFoundException;
-import pl.edu.pjatk.foodbook.userservice.repository.model.User;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.request.NewRequestUser;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserCreatedResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.request.CreateUserInput;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserRepresentation;
+import pl.edu.pjatk.foodbook.userservice.rest.resource.UserResource;
 import pl.edu.pjatk.foodbook.userservice.rest.service.UserService;
 
 @RestController
-@RequestMapping(
-    name = "User API",
-    path = "/api/v1")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserResource {
     private final UserService userService;
 
-    @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        try {
-            return ResponseEntity.ok(userService.getUser(username));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @Override
+    public ResponseEntity<UserRepresentation> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUser(username));
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserCreatedResponse> saveUser(@RequestBody @Valid NewRequestUser user) throws AlreadyExistsException {
-        UserCreatedResponse response = userService.saveUser(user);
+    @Override
+    public ResponseEntity<UserRepresentation> saveUser(@RequestBody @Valid CreateUserInput user) {
+        UserRepresentation response = userService.saveUser(user);
         return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.CREATED);
     }
 }

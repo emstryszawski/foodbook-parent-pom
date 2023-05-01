@@ -3,9 +3,9 @@ package pl.edu.pjatk.foodbook.userservice.exception;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class NotFoundException extends RuntimeException {
+public class UserNotFoundException extends RuntimeException {
 
-    public NotFoundException(String message) {
+    public UserNotFoundException(String message) {
         super(message);
     }
 }

@@ -18,10 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import pl.edu.pjatk.foodbook.userservice.exception.AlreadyExistsException;
+import pl.edu.pjatk.foodbook.userservice.exception.UserAlreadyExistsException;
 import pl.edu.pjatk.foodbook.userservice.repository.UserRepository;
 import pl.edu.pjatk.foodbook.userservice.repository.model.Role;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.request.NewRequestUser;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.request.CreateUserInput;
 import pl.edu.pjatk.foodbook.userservice.rest.service.UserService;
 
 import static org.mockito.Mockito.any;
@@ -55,14 +55,14 @@ class UserControllerTest {
     @Test
     public void shouldReturnCreatedWhenSavingNewUser() throws Exception {
         // given
-        NewRequestUser newRequestUser = NewRequestUser.builder()
+        CreateUserInput createUserInput = CreateUserInput.builder()
                                             .username("theLegend27")
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy Jones Jr")
                                             .password("TheRoy88$")
                                             .role(Role.USER.name())
                                             .build();
-        byte[] content = objectMapper.writeValueAsBytes(newRequestUser);
+        byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
                 // when
                 MockMvcRequestBuilders
@@ -76,13 +76,13 @@ class UserControllerTest {
     @Test
     public void shouldReturnBadRequestWhenSavingNewUser() throws Exception {
         // given missing username, wrong format email, invalid password, too short real name
-        NewRequestUser newRequestUser = NewRequestUser.builder()
+        CreateUserInput createUserInput = CreateUserInput.builder()
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy")
                                             .password("theroy")
                                             .role(Role.USER.name())
                                             .build();
-        byte[] content = objectMapper.writeValueAsBytes(newRequestUser);
+        byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
                 // when
                 MockMvcRequestBuilders
@@ -96,17 +96,17 @@ class UserControllerTest {
     @Test
     public void shouldReturnBadRequestWhenUserAlreadyExists() throws Exception {
         // given
-        NewRequestUser newRequestUser = NewRequestUser.builder()
+        CreateUserInput createUserInput = CreateUserInput.builder()
                                             .username("theLegend27")
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy Jones Jr")
                                             .password("TheRoy88$")
                                             .role(Role.USER.name())
                                             .build();
-        Mockito.doThrow(AlreadyExistsException.class)
+        Mockito.doThrow(UserAlreadyExistsException.class)
             .when(userService)
             .saveUser(any());
-        byte[] content = objectMapper.writeValueAsBytes(newRequestUser);
+        byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
                 // when
                 MockMvcRequestBuilders

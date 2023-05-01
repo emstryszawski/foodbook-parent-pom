@@ -5,13 +5,13 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponse;
 
-public class AlreadyExistsException extends Exception implements ErrorResponse {
+public class UserAlreadyExistsException extends RuntimeException implements ErrorResponse {
 
     private final ProblemDetail body;
 
     private final String existingProperty;
 
-    public AlreadyExistsException(String message, String existingProperty) {
+    public UserAlreadyExistsException(String message, String existingProperty) {
         super(message);
         this.existingProperty = existingProperty;
         this.body = ProblemDetail.forStatusAndDetail(getStatusCode(), "Invalid request body.");

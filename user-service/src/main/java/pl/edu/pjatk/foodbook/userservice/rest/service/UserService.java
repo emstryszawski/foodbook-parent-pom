@@ -2,15 +2,16 @@ package pl.edu.pjatk.foodbook.userservice.rest.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-import pl.edu.pjatk.foodbook.userservice.exception.AlreadyExistsException;
-import pl.edu.pjatk.foodbook.userservice.exception.NotFoundException;
+import pl.edu.pjatk.foodbook.userservice.exception.UserAlreadyExistsException;
+import pl.edu.pjatk.foodbook.userservice.exception.UserNotFoundException;
 import pl.edu.pjatk.foodbook.userservice.repository.UserRepository;
 import pl.edu.pjatk.foodbook.userservice.repository.model.User;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.request.NewRequestUser;
-import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserCreatedResponse;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.request.CreateUserInput;
+import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserRepresentation;
 
-import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -24,13 +25,14 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public User getUser(String username) {
-        return userRepository
-                   .findByUsername(username)
-                   .orElseThrow(() -> new NotFoundException("User was not found with given username: " + username));
+    public UserRepresentation getUser(String username) {
+        User user = userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User was not found with given username: " + username));
+        return mapper.map(user, UserRepresentation.class);
     }
 
-    public UserCreatedResponse saveUser(NewRequestUser requestUser) throws AlreadyExistsException {
+    public UserRepresentation saveUser(CreateUserInput requestUser) {
         User user = mapper.map(requestUser, User.class);
         String email = user.getEmail();
         String username = user.getUsername();
@@ -39,17 +41,19 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        UserCreatedResponse response = mapper.map(savedUser, UserCreatedResponse.class);
-        response.setCreatedAt(LocalDateTime.now());
+        UserRepresentation response = mapper.map(savedUser, UserRepresentation.class);
+        response.setAuthorities(savedUser.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toList()));
         return response;
     }
 
-    private void validateIfAlreadyExists(String email, String username) throws AlreadyExistsException {
+    private void validateIfAlreadyExists(String email, String username) throws UserAlreadyExistsException {
         if (isEmailTaken(email)) {
-            throw new AlreadyExistsException("An account with email: " + email + " already exists.", "email");
+            throw new UserAlreadyExistsException("An account with email: " + email + " already exists.", "email");
         }
         if (isUsernameTaken(username)) {
-            throw new AlreadyExistsException("An account with username: " + username + " already exists.", "username");
+            throw new UserAlreadyExistsException("An account with username: " + username + " already exists.", "username");
         }
     }
 

@@ -1,5 +1,8 @@
 package pl.edu.pjatk.foodbook.userservice;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +12,13 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@OpenAPIDefinition(
+    info = @Info(
+        title = "User API",
+        description = "API for managing user data",
+        version = "0.0.1"
+    ),
+    servers = @Server(url = "http://localhost:8010"))
 public class UserServiceApplication {
 
     public static void main(String[] args) {
