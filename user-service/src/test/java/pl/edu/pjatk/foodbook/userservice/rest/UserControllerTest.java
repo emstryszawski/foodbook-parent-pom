@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import pl.edu.pjatk.foodbook.userservice.exception.UserAlreadyExistsException;
 import pl.edu.pjatk.foodbook.userservice.repository.UserRepository;
-import pl.edu.pjatk.foodbook.userservice.repository.model.Role;
 import pl.edu.pjatk.foodbook.userservice.rest.dto.request.CreateUserInput;
 import pl.edu.pjatk.foodbook.userservice.rest.service.UserService;
 
@@ -59,8 +58,6 @@ class UserControllerTest {
                                             .username("theLegend27")
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy Jones Jr")
-                                            .password("TheRoy88$")
-                                            .role(Role.USER.name())
                                             .build();
         byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
@@ -79,8 +76,6 @@ class UserControllerTest {
         CreateUserInput createUserInput = CreateUserInput.builder()
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy")
-                                            .password("theroy")
-                                            .role(Role.USER.name())
                                             .build();
         byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
@@ -100,8 +95,6 @@ class UserControllerTest {
                                             .username("theLegend27")
                                             .email("theLegend27@gmail.com")
                                             .realName("Roy Jones Jr")
-                                            .password("TheRoy88$")
-                                            .role(Role.USER.name())
                                             .build();
         Mockito.doThrow(UserAlreadyExistsException.class)
             .when(userService)

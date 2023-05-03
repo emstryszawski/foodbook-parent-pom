@@ -2,7 +2,6 @@ package pl.edu.pjatk.foodbook.userservice.rest.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import pl.edu.pjatk.foodbook.userservice.exception.UserAlreadyExistsException;
 import pl.edu.pjatk.foodbook.userservice.exception.UserNotFoundException;
@@ -10,8 +9,6 @@ import pl.edu.pjatk.foodbook.userservice.repository.UserRepository;
 import pl.edu.pjatk.foodbook.userservice.repository.model.User;
 import pl.edu.pjatk.foodbook.userservice.rest.dto.request.CreateUserInput;
 import pl.edu.pjatk.foodbook.userservice.rest.dto.response.UserRepresentation;
-
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -41,11 +38,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        UserRepresentation response = mapper.map(savedUser, UserRepresentation.class);
-        response.setAuthorities(savedUser.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.toList()));
-        return response;
+        return mapper.map(savedUser, UserRepresentation.class);
     }
 
     private void validateIfAlreadyExists(String email, String username) throws UserAlreadyExistsException {
