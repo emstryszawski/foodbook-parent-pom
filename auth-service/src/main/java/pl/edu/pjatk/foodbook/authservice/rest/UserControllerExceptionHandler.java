@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.edu.pjatk.foodbook.authservice.rest.exception.AuthenticationException;
+import pl.edu.pjatk.foodbook.authservice.rest.exception.InvalidTokenException;
 import pl.edu.pjatk.foodbook.authservice.rest.exception.TokenNotFoundException;
 import pl.edu.pjatk.foodbook.authservice.rest.exception.UserServiceClientException;
 
@@ -45,6 +47,30 @@ public class UserControllerExceptionHandler {
             .code(404)
             .status(HttpStatus.NOT_FOUND.toString())
             .message("Token not found.")
+            .errors(Collections.singletonList(exception.getLocalizedMessage()))
+            .build();
+        return new ResponseEntity<>(error, new HttpHeaders(), error.getCode());
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidToken(InvalidTokenException exception) {
+        ApiError error = ApiError.builder()
+            .timestamp(Date.from(Instant.now()))
+            .code(403)
+            .status(HttpStatus.FORBIDDEN.name())
+            .message(exception.getLocalizedMessage())
+            .errors(Collections.singletonList(exception.getLocalizedMessage()))
+            .build();
+        return new ResponseEntity<>(error, new HttpHeaders(), error.getCode());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleInvalidToken(AuthenticationException exception) {
+        ApiError error = ApiError.builder()
+            .timestamp(Date.from(Instant.now()))
+            .code(403)
+            .status(HttpStatus.FORBIDDEN.name())
+            .message(exception.getLocalizedMessage())
             .errors(Collections.singletonList(exception.getLocalizedMessage()))
             .build();
         return new ResponseEntity<>(error, new HttpHeaders(), error.getCode());

@@ -1,21 +1,22 @@
 package pl.edu.pjatk.foodbook.authservice.config;
 
-import feign.auth.BasicAuthRequestInterceptor;
+import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.edu.pjatk.foodbook.authservice.rest.feign.UserServiceClientErrorDecoder;
 
 @Configuration
 public class FeignClientConfig {
 
+    private final AuthInterceptor authInterceptor;
+
+    public FeignClientConfig(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
+    }
+
     @Bean
-    public BasicAuthRequestInterceptor basicAuthRequestInterceptor(
-        @Value("${feign.clients.user-service.username}") String username,
-        @Value("${feign.clients.user-service.password}") String password
-    ) {
-        return new BasicAuthRequestInterceptor(username, password);
+    public RequestInterceptor requestInterceptor() {
+        return authInterceptor;
     }
 
     @Bean

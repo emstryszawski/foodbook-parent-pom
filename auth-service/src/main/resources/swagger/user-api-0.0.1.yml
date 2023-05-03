@@ -5,29 +5,42 @@ info:
   version: 0.0.1
 servers:
 - url: http://localhost:8010
+tags:
+- name: User
+  description: User related resource
 paths:
   /api/v1:
     post:
       tags:
-      - user-controller
+      - User
+      summary: Create user
+      description: Create a User with given input
       operationId: saveUser
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewRequestUser'
+              $ref: '#/components/schemas/CreateUserInput'
         required: true
       responses:
-        "200":
-          description: OK
+        "204":
+          description: User successfully created
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: '#/components/schemas/UserCreatedResponse'
+                $ref: '#/components/schemas/UserRepresentation'
+        "400":
+          description: Bad request. Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /api/v1/{username}:
     get:
       tags:
-      - user-controller
+      - User
+      summary: Get user
+      description: Get the user by its username
       operationId: getUserByUsername
       parameters:
       - name: username
@@ -36,95 +49,55 @@ paths:
         schema:
           type: string
       responses:
-        "200":
-          description: OK
+        "404":
+          description: User was not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-  /api/v1/{userId}:
-    get:
-      tags:
-      - user-controller
-      operationId: getUserById
-      parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
+                $ref: '#/components/schemas/ApiError'
         "200":
-          description: OK
+          description: User was found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserRepresentation'
 components:
   schemas:
-    NewRequestUser:
+    CreateUserInput:
+      required:
+      - email
+      - username
       type: object
       properties:
         username:
-          type: string
-        password:
           type: string
         realName:
           type: string
         email:
           type: string
-        role:
-          type: string
-    UserCreatedResponse:
+    UserRepresentation:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        realName:
-          type: string
         username:
           type: string
         email:
           type: string
-        createdAt:
+        realName:
+          type: string
+    ApiError:
+      type: object
+      properties:
+        timestamp:
           type: string
           format: date-time
-    GrantedAuthority:
-      type: object
-      properties:
-        authority:
+        code:
+          type: integer
+          format: int32
+        status:
           type: string
-    User:
-      type: object
-      properties:
-        id:
+        message:
           type: string
-          format: uuid
-        email:
-          type: string
-        username:
-          type: string
-        realName:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
-          enum:
-          - USER
-          - MODERATOR
-          - ADMIN
-        enabled:
-          type: boolean
-        accountNonExpired:
-          type: boolean
-        accountNonLocked:
-          type: boolean
-        credentialsNonExpired:
-          type: boolean
-        authorities:
+        errors:
           type: array
           items:
-            $ref: '#/components/schemas/GrantedAuthority'
+            type: string

@@ -1,4 +1,4 @@
-package pl.edu.pjatk.foodbook.authservice.rest.feign;
+package pl.edu.pjatk.foodbook.authservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

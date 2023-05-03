@@ -4,113 +4,114 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import pl.edu.pjatk.foodbook.authservice.repository.model.AccessToken;
+import pl.edu.pjatk.foodbook.authservice.repository.RefreshTokenRepository;
 import pl.edu.pjatk.foodbook.authservice.repository.model.RefreshToken;
+import pl.edu.pjatk.foodbook.authservice.rest.dto.AuthenticationResponse;
+import pl.edu.pjatk.foodbook.authservice.rest.exception.InvalidTokenException;
 import pl.edu.pjatk.foodbook.authservice.rest.exception.TokenNotFoundException;
-import pl.edu.pjatk.foodbook.authservice.swagger.user.model.GrantedAuthority;
-import pl.edu.pjatk.foodbook.authservice.swagger.user.model.User;
+import pl.edu.pjatk.foodbook.authservice.security.JwtHelper;
 
 import java.security.Key;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class JwtTokenService {
     private final int TOKEN_EXPIRATION_TIME;
     private final int REFRESH_TOKEN_EXPIRATION_TIME;
-    private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtHelper jwtHelper;
     private final Key signInKey;
 
     public JwtTokenService(
         @Value("${foodbook.security.jwt.tokenExpirationTimeMs}") int tokenExpirationTime,
         @Value("${foodbook.security.jwt.refreshTokenExpirationTimeMs}") int refreshTokenExpirationTime,
-        TokenService tokenService, Key signInKey) {
+        UserDetailsService userDetailsService,
+        RefreshTokenRepository refreshTokenRepository, JwtHelper jwtHelper,
+        Key signInKey) {
         TOKEN_EXPIRATION_TIME = tokenExpirationTime;
         REFRESH_TOKEN_EXPIRATION_TIME = refreshTokenExpirationTime;
-        this.tokenService = tokenService;
+        this.userDetailsService = userDetailsService;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtHelper = jwtHelper;
         this.signInKey = signInKey;
     }
 
-    public boolean isTokenValid(String jwt) {
-        AccessToken token = tokenService.getToken(jwt);
-        return token.isValid();
-    }
-
-    public Pair<AccessToken, RefreshToken> generateTokens(User user) {
-        ZonedDateTime tokenValid = ZonedDateTime.now(ZoneId.systemDefault()).plus(TOKEN_EXPIRATION_TIME, ChronoUnit.MILLIS);
-        LocalDateTime accessTokenValidUntil = tokenValid.toLocalDateTime();
-        LocalDateTime refreshTokenValidUntil = ZonedDateTime.now(ZoneId.systemDefault()).plus(REFRESH_TOKEN_EXPIRATION_TIME, ChronoUnit.MILLIS).toLocalDateTime();
-
-        String username = user.getUsername();
-        UUID userId = user.getId();
+    public AuthenticationResponse generateTokens(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", user.getAuthorities());
-        String jwt = generateJwtToken(username, tokenValid.toInstant(), claims);
+        claims.put("authorities", userDetails.getAuthorities());
+        String jwt = generateJwtToken(username, claims);
 
-        tokenService.revokeAll(userId);
-
-        AccessToken accessToken = AccessToken.builder()
-            .userId(userId)
-            .token(jwt)
+        RefreshToken refreshToken = RefreshToken.builder()
+            .username(username)
+            .expirationDate(LocalDateTime.now().plus(REFRESH_TOKEN_EXPIRATION_TIME, ChronoUnit.MILLIS))
             .build();
 
-        accessToken.setValidUntil(accessTokenValidUntil);
+        revokeAllRefreshTokens(username);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setValidUntil(refreshTokenValidUntil);
+        refreshTokenRepository.save(refreshToken);
 
-        accessToken.setRefreshToken(refreshToken);
-
-        return tokenService.save(accessToken);
+        return AuthenticationResponse.builder()
+            .token(jwt)
+            .tokenExpiresIn(Duration.between(Instant.now(), jwtHelper.extractExpirationTime(jwt).toInstant()).toMillis())
+            .refreshToken(refreshToken.getId().toString())
+            .refreshTokenExpiresIn(Duration.between(Instant.now(),
+                refreshToken.getExpirationDate()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()).toMillis())
+            .build();
     }
 
-    private String generateJwtToken(String subject, Instant expirationDate, Map<String, ?> claims) {
+    private String generateJwtToken(String subject, Map<String, ?> claims) {
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)
             .setIssuer("foodbook-auth-service")
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(Date.from(expirationDate))
+            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
             .signWith(signInKey, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    public Pair<AccessToken, RefreshToken> refreshTokens(UUID refreshTokenId) {
-        RefreshToken refreshToken = tokenService.getRefreshToken(refreshTokenId);
+    public AuthenticationResponse refreshTokens(UUID refreshTokenId) {
+        RefreshToken refreshToken = refreshTokenRepository.findById(refreshTokenId)
+            .orElseThrow(() -> new TokenNotFoundException("Refresh token was not found"));
 
         if (!refreshToken.isValid()) {
-            throw new TokenNotFoundException("Refresh token is invalid");
+            throw new InvalidTokenException("Refresh token is invalid");
         }
 
-        AccessToken accessToken = tokenService.getAccessTokenByRefreshToken(refreshToken);
-        UUID userId = accessToken.getUserId();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        List<GrantedAuthority> authorities = authentication.getAuthorities()
-            .stream()
-            .map(grantedAuthority -> new GrantedAuthority().authority(grantedAuthority.getAuthority()))
-            .collect(Collectors.toList());
+        String username = refreshToken.getUsername();
 
-        log.info("username {}", username);
-
-        return generateTokens(
-            new User()
-                .id(userId)
-                .username(username)
-                .authorities(authorities));
+        return generateTokens(username);
     }
 
-    public void removeAll(String jwt) {
-        tokenService.removeAll(jwt);
+    public boolean isTokenValid(String jwtToken) {
+        try {
+            String username = jwtHelper.extractUsername(jwtToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            return username.equals(userDetails.getUsername()) && jwtHelper.isTokenNonExpired(jwtToken);
+        } catch (InvalidTokenException e) {
+            return false;
+        }
+    }
+
+    public void revokeAllRefreshTokens(String username) {
+        List<RefreshToken> revokedRefreshTokens = refreshTokenRepository.findAllByUsername(username)
+            .stream()
+            .peek(token -> token.setRevoked(true))
+            .toList();
+
+        refreshTokenRepository.saveAllAndFlush(revokedRefreshTokens);
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,29 +15,35 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "refresh_token")
-public class RefreshToken extends Token {
-
+@Table(name = "token")
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID token;
+    private UUID id;
 
-    @Override
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private LocalDateTime expirationDate;
+
+    @Column(nullable = false)
+    private boolean isRevoked = false;
+
     public boolean isValid() {
-        return token != null && !isExpired() && !isRevoked();
+        return expirationDate.isAfter(LocalDateTime.now());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RefreshToken that = (RefreshToken) o;
-        return token != null && Objects.equals(token, that.token);
+        RefreshToken accessToken = (RefreshToken) o;
+        return id != null && Objects.equals(id, accessToken.id);
     }
 
     @Override
     public int hashCode() {
         return getClass().hashCode();
     }
-
 }

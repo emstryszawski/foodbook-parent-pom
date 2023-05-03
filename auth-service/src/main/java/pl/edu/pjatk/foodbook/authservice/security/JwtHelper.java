@@ -1,11 +1,15 @@
 package pl.edu.pjatk.foodbook.authservice.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import pl.edu.pjatk.foodbook.authservice.rest.exception.InvalidTokenException;
 
 import java.security.Key;
+import java.time.Instant;
+import java.util.Date;
 import java.util.function.Function;
 
 @Slf4j
@@ -16,7 +20,6 @@ public class JwtHelper {
 
     private final Key signInKey;
 
-
     public JwtHelper(Key signInKey) {
         this.signInKey = signInKey;
     }
@@ -25,16 +28,24 @@ public class JwtHelper {
         return authHeader.substring(7);
     }
 
-    public boolean isAuthHeaderValid(String authHeader) {
-        return authHeader != null && authHeader.startsWith(BEARER);
+    public boolean isAuthHeaderInvalid(String authHeader) {
+        return authHeader == null || !authHeader.startsWith(BEARER);
     }
 
     public boolean isAuthenticated() {
         return SecurityContextHolder.getContext().getAuthentication() != null;
     }
 
-    public String extractUsernameFromToken(String jwtToken) {
+    public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
+    }
+
+    public java.util.Date extractExpirationTime(String jwtToken) {
+        return extractClaim(jwtToken, Claims::getExpiration);
+    }
+
+    public boolean isTokenNonExpired(String jwtToken) {
+        return extractClaim(jwtToken, Claims::getExpiration).after(Date.from(Instant.now()));
     }
 
     private <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
@@ -57,7 +68,9 @@ public class JwtHelper {
             log.error("Unsupported JWT token");
         } catch (IllegalArgumentException e) {
             log.error("JWT Claims are empty");
+        } catch (SignatureException e) {
+            log.error("JWT Invalid signature");
         }
-        return null;
+        throw new InvalidTokenException("Invalid JWT Token");
     }
 }
