@@ -1,11 +1,11 @@
 server:
-  port: 8077
+  port: 8101
 
 spring:
   application:
-    name: recipe-service
+    name: product-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/recipes
+    url: jdbc:postgresql://localhost:5432/products
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver

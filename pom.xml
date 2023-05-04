@@ -16,6 +16,7 @@
         <module>gateway-service</module>
         <module>foodbook-service</module>
         <module>recipe-service</module>
+        <module>product-service</module>
     </modules>
 
     <properties>
