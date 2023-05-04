@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.edu.pjatk.foodbook.recipeservice.security.AuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +23,13 @@ public class SecurityConfig {
             .disable()
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests()
+            .requestMatchers(
+                "/v3/api-docs",
+                "/v3/api-docs/**",
+                "/v3/api-docs.yaml",
+                "/swagger-ui.html",
+                "/swagger-ui/**")
+            .permitAll()
             .anyRequest()
             .authenticated();
 
