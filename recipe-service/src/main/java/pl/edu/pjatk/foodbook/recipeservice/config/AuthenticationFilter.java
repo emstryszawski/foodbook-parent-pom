@@ -69,7 +69,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if (username != null && !isAuthenticated()) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 username,
-                null,
+                jwt,
                 authorities
             );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,7 +23,8 @@ public class Recipe {
     private String name;
     @Lob
     private String recipe;
-    private String products;
+    @OneToMany(mappedBy = "recipe")
+    private List<Product> productIds;
     private Integer proteins;
     private Integer carbs;
     private Integer fats;

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.edu.pjatk.foodbook.recipeservice.repository.model.Macros;
-import pl.edu.pjatk.foodbook.recipeservice.repository.model.Product;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +18,7 @@ public class GetRecipe {
     private String name;
     private String owner;
     private String recipe;
-    private List<Product> products;
+    private List<ProductDto> products;
     private Macros macros;
     private String mainProducts;
     private String description;

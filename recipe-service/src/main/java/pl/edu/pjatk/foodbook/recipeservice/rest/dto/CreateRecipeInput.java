@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.edu.pjatk.foodbook.recipeservice.repository.model.Macros;
-import pl.edu.pjatk.foodbook.recipeservice.repository.model.Product;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class CreateRecipeInput {
     // todo valid
     private String name;
     private String recipe;
-    private List<Product> products;
+    private List<ProductDto> products;
     private Macros macros;
     private String mainProducts;
     private String description;

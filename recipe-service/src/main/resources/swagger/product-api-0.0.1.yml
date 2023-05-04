@@ -1,0 +1,120 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8101
+  description: Generated server url
+paths:
+  /api/v1/products:
+    post:
+      tags:
+      - product-controller
+      operationId: addProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProductInput'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetProduct'
+  /api/v1/products/{productId}:
+    get:
+      tags:
+      - product-controller
+      operationId: getProduct
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetProduct'
+components:
+  schemas:
+    AddProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        price:
+          type: number
+        proteins:
+          type: integer
+          format: int32
+        fats:
+          type: integer
+          format: int32
+        carbs:
+          type: integer
+          format: int32
+        calories:
+          type: integer
+          format: int32
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/Allergen'
+    Allergen:
+      type: object
+      properties:
+        name:
+          type: string
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+    GetProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        addedBy:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        price:
+          type: number
+        proteins:
+          type: integer
+          format: int32
+        fats:
+          type: integer
+          format: int32
+        carbs:
+          type: integer
+          format: int32
+        calories:
+          type: integer
+          format: int32
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/Allergen'
