@@ -23,12 +23,9 @@ public class Recipe {
     private String name;
     @Lob
     private String recipe;
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipeId")
+    @ToString.Exclude
     private List<Product> productIds;
-    private Integer proteins;
-    private Integer carbs;
-    private Integer fats;
-    private Integer calories;
     private String mainProducts;
     @Lob
     private String description;

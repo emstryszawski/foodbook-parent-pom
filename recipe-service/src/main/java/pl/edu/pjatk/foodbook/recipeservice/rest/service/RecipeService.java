@@ -1,6 +1,7 @@
 package pl.edu.pjatk.foodbook.recipeservice.rest.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import pl.edu.pjatk.foodbook.recipeservice.swagger.product.model.GetProduct;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -53,66 +55,95 @@ public class RecipeService {
                 Product.ProductBuilder builder = Product.builder();
                 if (product.getId() == null) {
                     ResponseEntity<GetProduct> response =
-                        productApi.addProduct(new AddProductInput().name(product.getName()));
+                        productApi.addProduct(getInput(product));
 
                     if (response != null && response.getBody() != null) {
                         GetProduct getProduct = response.getBody();
-                        builder.id(getProduct.getId());
+                        builder.productId(getProduct.getId());
                     }
                 } else {
-                    builder.id(product.getId());
+                    builder.productId(product.getId());
                 }
-                return builder.unit(product.getUnit())
+                return builder
                     .amount(product.getAmount())
-                    .recipe(recipe)
+                    .unit(product.getUnit())
+                    .recipeId(recipe)
                     .build();
             }).toList();
     }
 
+    private static AddProductInput getInput(ProductDto product) {
+        String unit = product.getUnit();
+        int amount = product.getAmount();
+        int proteins = product.getProteins();
+        int carbs = product.getCarbs();
+        int fats = product.getFats();
+        int calories = product.getCalories();
+
+        Function<Integer, Integer> func = macro -> macro;
+
+        switch (unit) {
+            case "litre", "kilogram" -> func = macro -> macro != 0 ? macro / (amount * 10) : 0;
+            case "gram", "millilitre" -> func = macro -> macro != 0 ? macro / (amount / 100) : 0;
+        }
+
+        proteins = func.apply(proteins);
+        carbs = func.apply(carbs);
+        fats = func.apply(fats);
+        calories = func.apply(calories);
+
+        return new AddProductInput()
+            .name(product.getName())
+            .proteins(proteins)
+            .carbs(carbs)
+            .fats(fats)
+            .calories(calories);
+    }
+
     private GetRecipe mapToDto(Recipe recipe) {
-        return GetRecipe.builder()
+        GetRecipe getRecipe = GetRecipe.builder()
             .id(recipe.getId())
             .name(recipe.getName())
             .owner(recipe.getOwner())
             .products(
-                recipe.getProductIds().stream()
-                    .map(productId -> {
-                        GetProduct getProduct = productApi.getProduct(productId.getId()).getBody();
-                        return ProductDto.builder()
-                            .id(getProduct.getId())
-                            .name(getProduct.getName())
-                            .amount(productId.getAmount())
-                            .unit(productId.getUnit())
-                            .build();
-                    }).toList()
+                fetchProductsFromProductApi(recipe)
             )
             .recipe(recipe.getRecipe())
-            .macros(Macros.builder()
-                .proteins(recipe.getProteins())
-                .carbs(recipe.getCarbs())
-                .fats(recipe.getFats())
-                .calories(recipe.getCalories())
-                .build())
             .mainProducts(recipe.getMainProducts())
             .description(recipe.getDescription())
             .build();
+
+        Macros macros = getRecipe.countMacros();
+        getRecipe.setMacros(macros);
+
+        return getRecipe;
+    }
+
+    @NotNull
+    private List<ProductDto> fetchProductsFromProductApi(Recipe recipe) {
+        return recipe.getProductIds().stream()
+            .map(productId -> {
+                GetProduct getProduct = productApi.getProduct(productId.getProductId()).getBody();
+                return ProductDto.builder()
+                    .id(getProduct.getId())
+                    .name(getProduct.getName())
+                    .amount(productId.getAmount())
+                    .unit(productId.getUnit())
+                    .proteins(getProduct.getProteins())
+                    .fats(getProduct.getFats())
+                    .carbs(getProduct.getCarbs())
+                    .calories(getProduct.getCalories())
+                    .build();
+            }).toList();
     }
 
     private Recipe buildRecipeFromInput(CreateRecipeInput input, String username) {
-        Macros macros = input.getMacros();
         Recipe.RecipeBuilder recipeBuilder = Recipe.builder()
             .name(input.getName())
             .owner(username)
             .recipe(input.getRecipe())
             .mainProducts(input.getMainProducts())
             .description(input.getDescription());
-        if (macros != null) {
-            recipeBuilder.proteins(macros.getProteins())
-                .carbs(macros.getCarbs())
-                .fats(macros.getFats())
-                .calories(macros.getCalories())
-                .build();
-        }
         return recipeBuilder.build();
     }
 

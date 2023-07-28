@@ -45,8 +45,8 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders
-                      .webAppContextSetup(context)
-                      .build();
+            .webAppContextSetup(context)
+            .build();
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         modelMapper = new ModelMapper();
     }
@@ -55,10 +55,10 @@ class UserControllerTest {
     public void shouldReturnCreatedWhenSavingNewUser() throws Exception {
         // given
         CreateUserInput createUserInput = CreateUserInput.builder()
-                                            .username("theLegend27")
-                                            .email("theLegend27@gmail.com")
-                                            .realName("Roy Jones Jr")
-                                            .build();
+            .username("theLegend27")
+            .email("theLegend27@gmail.com")
+            .realName("Roy Jones Jr")
+            .build();
         byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
                 // when
@@ -74,9 +74,9 @@ class UserControllerTest {
     public void shouldReturnBadRequestWhenSavingNewUser() throws Exception {
         // given missing username, wrong format email, invalid password, too short real name
         CreateUserInput createUserInput = CreateUserInput.builder()
-                                            .email("theLegend27@gmail.com")
-                                            .realName("Roy")
-                                            .build();
+            .email("theLegend27@gmail.com")
+            .realName("Roy")
+            .build();
         byte[] content = objectMapper.writeValueAsBytes(createUserInput);
         mockMvc.perform(
                 // when
@@ -92,10 +92,10 @@ class UserControllerTest {
     public void shouldReturnBadRequestWhenUserAlreadyExists() throws Exception {
         // given
         CreateUserInput createUserInput = CreateUserInput.builder()
-                                            .username("theLegend27")
-                                            .email("theLegend27@gmail.com")
-                                            .realName("Roy Jones Jr")
-                                            .build();
+            .username("theLegend27")
+            .email("theLegend27@gmail.com")
+            .realName("Roy Jones Jr")
+            .build();
         Mockito.doThrow(UserAlreadyExistsException.class)
             .when(userService)
             .saveUser(any());

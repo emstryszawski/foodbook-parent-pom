@@ -29,8 +29,7 @@ public class AuthController {
     ) {
         String username = request.getUsername();
         log.info("Request to register user with username {}", username);
-        authService.register(request);
-        AuthenticationResponse authenticationResponse = jwtService.generateTokens(username);
+        AuthenticationResponse authenticationResponse = authService.register(request);
         log.info("User with username {} registered successfully", username);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.CREATED);
     }

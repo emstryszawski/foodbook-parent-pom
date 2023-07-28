@@ -20,14 +20,13 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
             return false;
         }
 
-        PasswordValidator validator = new PasswordValidator(Arrays.asList(
-            new LengthRule(8, 30),
-            new WhitespaceRule(),
-            new UsernameRule(),
-            new CharacterRule(EnglishCharacterData.UpperCase, 1),
-            new CharacterRule(EnglishCharacterData.Digit, 1),
-            new CharacterRule(EnglishCharacterData.Special, 1)
-        ));
+        PasswordValidator validator = new PasswordValidator(
+            Arrays.asList(
+                new LengthRule(8, 30),
+                new CharacterRule(EnglishCharacterData.UpperCase, 1),
+                new CharacterRule(EnglishCharacterData.Digit, 1),
+                new CharacterRule(EnglishCharacterData.Special, 1)
+            ));
 
         RuleResult result = validator.validate(new PasswordData(password));
 

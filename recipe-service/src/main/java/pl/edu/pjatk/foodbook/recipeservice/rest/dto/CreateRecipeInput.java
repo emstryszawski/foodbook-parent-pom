@@ -1,9 +1,11 @@
 package pl.edu.pjatk.foodbook.recipeservice.rest.dto;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.edu.pjatk.foodbook.recipeservice.repository.model.Macros;
 
 import java.util.List;
 
@@ -11,12 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateRecipeInput {
-    // todo valid
+    @NotBlank
     private String name;
+    @NotBlank
     private String recipe;
+    @NotEmpty
     private List<ProductDto> products;
-    private Macros macros;
+    @Nullable
     private String mainProducts;
+    @Nullable
     private String description;
 }
 

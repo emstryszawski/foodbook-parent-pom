@@ -12,6 +12,7 @@ public class RouterValidator {
     private static final List<String> unsecured = List.of(
         "auth/api/v1/auth/register",
         "auth/api/v1/auth/authenticate",
+        "auth/api/v1/auth/refresh-token",
         "auth/api/v1/auth/validate-token"
     );
 

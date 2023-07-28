@@ -11,6 +11,7 @@ import pl.edu.pjatk.foodbook.authservice.repository.model.Authentication;
 import pl.edu.pjatk.foodbook.authservice.repository.model.Role;
 import pl.edu.pjatk.foodbook.authservice.repository.model.RoleEnum;
 import pl.edu.pjatk.foodbook.authservice.rest.dto.AuthenticationRequest;
+import pl.edu.pjatk.foodbook.authservice.rest.dto.AuthenticationResponse;
 import pl.edu.pjatk.foodbook.authservice.rest.dto.RegisterRequest;
 import pl.edu.pjatk.foodbook.authservice.swagger.user.api.UserApi;
 import pl.edu.pjatk.foodbook.authservice.swagger.user.model.CreateUserInput;
@@ -27,24 +28,28 @@ public class AuthenticationService {
 
     private final AuthenticationRepository authRepository;
 
-    public void register(RegisterRequest request) {
+    private final JwtTokenService jwtTokenService;
+
+    public AuthenticationResponse register(RegisterRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         Authentication authentication = new Authentication(
             username, encodedPassword, Set.of(new Role(RoleEnum.USER))
         );
+
         authRepository.save(authentication);
 
-        String firstname = request.getFirstname();
         CreateUserInput createUserInput = new CreateUserInput()
-            .realName(firstname +
-                (firstname != null && !firstname.isEmpty() ? " " : "") +
-                request.getLastname())
+            .realName(request.getFirstname() + " " + request.getLastname())
             .email(request.getEmail())
             .username(username);
 
+        AuthenticationResponse authenticationResponse = jwtTokenService.generateTokens(username);
+
         userApi.saveUser(createUserInput);
+
+        return authenticationResponse;
     }
 
     public void authenticate(AuthenticationRequest request) {

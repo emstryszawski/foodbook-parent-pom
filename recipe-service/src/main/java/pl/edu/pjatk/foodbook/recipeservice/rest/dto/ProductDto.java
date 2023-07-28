@@ -1,5 +1,9 @@
 package pl.edu.pjatk.foodbook.recipeservice.rest.dto;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +16,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
+    @Nullable
     private UUID id;
+    @NotBlank
     private String name;
-    private Integer amount;
+    @NotNull
+    @Size(min = 1)
+    private int amount;
+    @NotBlank
     private String unit;
-    // TODO add more fields when on UI added
+    @NotNull
+    private int proteins;
+    @NotNull
+    private int fats;
+    @NotNull
+    private int carbs;
+    @NotNull
+    private int calories;
 }

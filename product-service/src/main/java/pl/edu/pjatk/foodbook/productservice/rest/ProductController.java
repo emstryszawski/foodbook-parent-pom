@@ -9,6 +9,7 @@ import pl.edu.pjatk.foodbook.productservice.rest.dto.AddProductInput;
 import pl.edu.pjatk.foodbook.productservice.rest.dto.GetProduct;
 import pl.edu.pjatk.foodbook.productservice.rest.service.ProductService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -36,5 +37,13 @@ public class ProductController {
         GetProduct product = productService.getProductById(productId);
         log.info("Product with id {} was found {}", productId, product);
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GetProduct>> getAllProducts() {
+        log.info("Request to get all product");
+        List<GetProduct> allProducts = productService.getAllProducts();
+        log.info("Received list of all products {}", allProducts);
+        return ResponseEntity.ok(allProducts);
     }
 }

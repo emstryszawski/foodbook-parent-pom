@@ -36,6 +36,7 @@ public class SecurityConfig {
             .requestMatchers(API_DOCS_PATH, API_DOCS_PATH + ".yaml",
                 "/api/v1/auth/register",
                 "/api/v1/auth/authenticate",
+                "/api/v1/auth/refresh-token",
                 "/api/v1/auth/validate-token")
             .permitAll()
             .anyRequest()

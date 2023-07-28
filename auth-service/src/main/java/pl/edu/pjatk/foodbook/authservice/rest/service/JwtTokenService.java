@@ -4,6 +4,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,7 @@ public class JwtTokenService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", userDetails.getAuthorities());
+
         String jwt = generateJwtToken(username, claims);
 
         RefreshToken refreshToken = RefreshToken.builder()
@@ -58,6 +62,8 @@ public class JwtTokenService {
             .build();
 
         revokeAllRefreshTokens(username);
+
+        setSecurityContext(userDetails, jwt);
 
         refreshTokenRepository.save(refreshToken);
 
@@ -70,6 +76,17 @@ public class JwtTokenService {
                     .atZone(ZoneId.systemDefault())
                     .toInstant()).toMillis())
             .build();
+    }
+
+    private void setSecurityContext(UserDetails userDetails, String jwt) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+            userDetails,
+            jwt,
+            userDetails.getAuthorities()
+        );
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authToken);
+        SecurityContextHolder.setContext(context);
     }
 
     private String generateJwtToken(String subject, Map<String, ?> claims) {
@@ -100,7 +117,7 @@ public class JwtTokenService {
         try {
             String username = jwtHelper.extractUsername(jwtToken);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            return username.equals(userDetails.getUsername()) && jwtHelper.isTokenNonExpired(jwtToken);
+            return userDetails != null && jwtHelper.isTokenNonExpired(jwtToken);
         } catch (InvalidTokenException e) {
             return false;
         }

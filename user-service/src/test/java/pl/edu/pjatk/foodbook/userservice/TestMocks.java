@@ -1,12 +1,10 @@
 package pl.edu.pjatk.foodbook.userservice;
 
 import org.junit.platform.commons.util.ReflectionUtils;
-import pl.edu.pjatk.foodbook.userservice.repository.model.Role;
 import pl.edu.pjatk.foodbook.userservice.repository.model.User;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class TestMocks {
@@ -28,12 +26,9 @@ public class TestMocks {
 
     private static User getUser() {
         return User.builder()
-                   .id(UUID.randomUUID())
                    .realName("Firstname Lastname")
                    .username("username")
-                   .password("*********")
                    .email("user@mail.com")
-                   .role(Role.USER)
                    .build();
     }
 }

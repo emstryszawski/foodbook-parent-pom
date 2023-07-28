@@ -19,6 +19,7 @@ public class UserServiceClientErrorDecoder implements ErrorDecoder {
     @SneakyThrows
     @Override
     public Exception decode(String methodKey, Response response) {
+        if (response == null) return new UserServiceClientException("unrecognized-error");
         Reader reader = response.body().asReader(Charset.defaultCharset());
         BufferedReader bufferedReader = new BufferedReader(reader);
         StringBuilder stringBuilder = new StringBuilder();

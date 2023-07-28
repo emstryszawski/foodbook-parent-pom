@@ -1,4 +1,4 @@
-package pl.edu.pjatk.foodbook.foodbookservice.security;
+package pl.edu.pjatk.foodbook.foodbookservice.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -41,9 +41,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         @NonNull FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || authHeader.isEmpty()) {
-            response.setStatus(401);
-            response.getWriter().write("Unauthorized access, no auth header");
+        if ((authHeader == null || authHeader.isEmpty()) || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -70,7 +69,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if (username != null && !isAuthenticated()) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 username,
-                null,
+                jwt,
                 authorities
             );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

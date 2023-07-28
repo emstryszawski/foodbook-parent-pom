@@ -8,6 +8,7 @@ import pl.edu.pjatk.foodbook.productservice.rest.dto.AddProductInput;
 import pl.edu.pjatk.foodbook.productservice.rest.dto.GetProduct;
 import pl.edu.pjatk.foodbook.productservice.rest.exception.ProductNotFoundException;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -63,5 +64,11 @@ public class ProductService {
             .description(input.getDescription())
             .allergens(input.getAllergens())
             .build();
+    }
+
+    public List<GetProduct> getAllProducts() {
+        return productRepository.findAll().stream()
+            .map(this::mapToDto)
+            .toList();
     }
 }

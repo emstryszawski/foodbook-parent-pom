@@ -1,9 +1,6 @@
 package pl.edu.pjatk.foodbook.recipeservice.repository.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -15,12 +12,14 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(ProductRecipeKey.class)
 public class Product {
     @Id
-    private UUID id;
-    private Integer amount;
-    private String unit;
+    private UUID productId;
+    @Id
     @ManyToOne
     @JoinColumn(name = "recipe_id")
-    private Recipe recipe;
+    private Recipe recipeId;
+    private Integer amount;
+    private String unit;
 }
