@@ -1,72 +1,85 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.edu.pjatk.foodbook</groupId>
+    <groupId>org.foodbook</groupId>
     <artifactId>foodbook</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
-    <name>Foodbook microservices</name>
-    <url>https://foodbook.com</url>
+    <version>1.0.0</version>
 
-    <modules>
-        <module>discovery-service</module>
-        <module>auth-service</module>
-        <module>user-service</module>
-        <module>gateway-service</module>
-        <module>foodbook-service</module>
-        <module>recipe-service</module>
-        <module>product-service</module>
-    </modules>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub emstryszawski Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/emstryszawski/foodbook</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.version>3.0.1</spring.boot.version>
+        <spring.boot.version>3.1.5</spring.boot.version>
         <spring.cloud.version>2022.0.1</spring.cloud.version>
+        <spring.feign.version>4.0.0</spring.feign.version>
+        <feign.version>12.0</feign.version>
         <spring.boot.maven.plugin.version>3.0.1</spring.boot.maven.plugin.version>
         <lombok.version>1.18.26</lombok.version>
         <eureka.version>4.0.0</eureka.version>
+        <open.api.version>2.0.4</open.api.version>
+        <hibernate.validator.version>8.0.0.Final</hibernate.validator.version>
+        <jwt.api.version>0.11.5</jwt.api.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--<SPRING-BOOT>-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <!--</SPRING-BOOT>-->
+
+            <!--<SPRING-CLOUD>-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
+            <!--<SPRING-CLOUD>-->
+
+            <!--<OPEN-API>-->
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-                <version>${eureka.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${open.api.version}</version>
             </dependency>
+            <!--<!OPEN-API>-->
+
+            <!--<HIBERNATE>-->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
+            </dependency>
+            <!--<HIBERNATE>-->
         </dependencies>
     </dependencyManagement>
 
@@ -74,15 +87,22 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring.feign.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${spring.feign.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+            <version>${eureka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -107,10 +127,12 @@
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
+            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-okhttp</artifactId>
+            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -118,24 +140,23 @@
             <version>4.1.90.Final</version>
             <classifier>osx-x86_64</classifier>
         </dependency>
+        <!--<JWT>-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>${jwt.api.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
+            <version>${jwt.api.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
+            <version>${jwt.api.version}</version>
         </dependency>
-
+        <!--</JWT>-->
     </dependencies>
 
     <build>

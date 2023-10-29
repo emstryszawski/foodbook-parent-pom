@@ -4,7 +4,6 @@
 ### STS ###
 .apt_generated
 .classpath
-.factorypath
 .project
 .settings
 .springBeans
@@ -43,6 +42,7 @@ local.properties
 .autotools
 
 # Java annotation processor (APT)
+.factorypath
 
 # PDT-specific (PHP Development Tools)
 .buildpath
@@ -56,25 +56,13 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
-# STS (Spring Tool Suite)
-
 # Code Recommenders
 .recommenders/
-
-# Annotation Processing
-.apt_generated/
 
 # Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
 .scala_dependencies
 .worksheet
-
-### Eclipse Patch ###
-# Eclipse Core
-
-# JDT-specific (Eclipse Java Development Tools)
-
-# Annotation Processing
 
 .sts4-cache/
 
@@ -157,7 +145,6 @@ $RECYCLE.BIN/
 
 ### IntelliJ IDEA ###
 .idea
-.idea/inspectionProfiles/*
 *.iws
 *.iml
 *.ipr
@@ -189,3 +176,7 @@ target
 .gradle
 README.html
 .exercism
+
+.DS_Store
+out/
+.micronaut/
