@@ -21,7 +21,7 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Package') {
             steps {
                 dir($dirName) {
                     sh 'mvn -B package --file pom.xml'
