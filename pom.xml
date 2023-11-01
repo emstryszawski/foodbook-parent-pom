@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.foodbook</groupId>
-    <artifactId>foodbook</artifactId>
+    <groupId>org.foodbook.api</groupId>
+    <artifactId>foodbook-parent-pom</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
@@ -11,7 +11,7 @@
         <repository>
             <id>github</id>
             <name>GitHub emstryszawski Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/emstryszawski/foodbook</url>
+            <url>https://maven.pkg.github.com/emstryszawski/foodbook-parent-pom</url>
         </repository>
     </distributionManagement>
 
@@ -38,7 +38,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot</artifactId>
                 <version>${spring.boot.version}</version>
-                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>

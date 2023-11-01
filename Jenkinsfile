@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        dirName = 'foodbook-parent-pom'
+    }
     stages {
         stage('Clean up') {
             steps {
@@ -8,20 +11,26 @@ pipeline {
         }
         stage('Clone repo') {
             steps {
-                sh 'git clone https://github.com/emstryszawski/foodbook-api.git'
+                sh 'git clone https://github.com/emstryszawski/foodbook-parent-pom.git'
             }
         }
         stage('Build') {
             steps {
-                dir('foodbook-api') {
+                dir($dirName) {
                     sh 'mvn clean install'
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                dir($dirName) {
                     sh 'mvn -B package --file pom.xml'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                dir('foodbook-api') {
+                dir($dirName) {
                     sh 'mvn deploy -s ${env.GITHUB_WORKSPACE}/settings.xml'
                 }
             }
