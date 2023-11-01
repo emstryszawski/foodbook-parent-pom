@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        dirName = 'foodbook-parent-pom'
+        DIR_NAME = 'foodbook-parent-pom'
     }
     stages {
         stage('Clean up') {
@@ -16,22 +16,22 @@ pipeline {
         }
         stage('Build') {
             steps {
-                dir($dirName) {
+                dir(env.DIR_NAME) {
                     sh 'mvn clean install'
                 }
             }
         }
-        stage('Build') {
+        stage('Package') {
             steps {
-                dir($dirName) {
+                dir(env.DIR_NAME) {
                     sh 'mvn -B package --file pom.xml'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                dir($dirName) {
-                    sh 'mvn deploy -s ${env.GITHUB_WORKSPACE}/settings.xml'
+                dir(env.DIR_NAME) {
+                    sh 'mvn deploy'
                 }
             }
         }
