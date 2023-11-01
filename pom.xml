@@ -23,9 +23,8 @@
         <spring.cloud.version>2022.0.1</spring.cloud.version>
         <spring.feign.version>4.0.0</spring.feign.version>
         <feign.version>12.0</feign.version>
-        <spring.boot.maven.plugin.version>3.0.1</spring.boot.maven.plugin.version>
         <lombok.version>1.18.26</lombok.version>
-        <eureka.version>4.0.0</eureka.version>
+        <eureka.version>4.0.3</eureka.version>
         <open.api.version>2.0.4</open.api.version>
         <hibernate.validator.version>8.0.0.Final</hibernate.validator.version>
         <jwt.api.version>0.11.5</jwt.api.version>
@@ -34,11 +33,6 @@
     <dependencyManagement>
         <dependencies>
             <!--<SPRING-BOOT>-->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
@@ -79,6 +73,19 @@
                 <version>${hibernate.validator.version}</version>
             </dependency>
             <!--<HIBERNATE>-->
+
+            <!--<EUREKA>-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                <version>${eureka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+                <version>${spring.feign.version}</version>
+            </dependency>
+            <!--</EUREKA>-->
         </dependencies>
     </dependencyManagement>
 
@@ -89,19 +96,9 @@
             <version>${spring.feign.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>${spring.feign.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-            <version>${eureka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -164,7 +161,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.maven.plugin.version}</version>
+                    <version>${spring.boot.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
