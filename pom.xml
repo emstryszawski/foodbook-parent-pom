@@ -1,26 +1,62 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.foodbook.api</groupId>
     <artifactId>foodbook-starter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
+    <inceptionYear>2023</inceptionYear>
+    <organization>
+        <name>emstryszawski</name>
+        <url>https://github.com/emstryszawski</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Emil Stryszawski</name>
+            <email>stryszawskiemil@gmail.com</email>
+            <url>https://github.com/emstryszawski</url>
+            <timezone>UTC +1</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <profiles>
+        <profile>
+            <id>github</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub emstryszawski Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/${organization.name}/${artifactId}</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
 
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub emstryszawski Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/emstryszawski/foodbook-starter</url>
+            <url>https://maven.pkg.github.com/${organization.name}/${artifactId}</url>
         </repository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/emstryszawski/foodbook-starter</url>
-        </repository>
-    </repositories>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/${organization.name}/${artifactId}/issues</url>
+    </issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
