@@ -33,7 +33,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub emstryszawski Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/${organization.name}/${artifactId}</url>
+                    <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
@@ -49,13 +49,13 @@
         <repository>
             <id>github</id>
             <name>GitHub emstryszawski Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/${organization.name}/${artifactId}</url>
+            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/${organization.name}/${artifactId}/issues</url>
+        <url>https://github.com/${project.organization.name}/${project.artifactId}/issues</url>
     </issueManagement>
 
     <properties>
