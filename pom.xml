@@ -4,7 +4,7 @@
     <groupId>org.foodbook.api</groupId>
     <artifactId>foodbook-starter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <inceptionYear>2023</inceptionYear>
     <organization>
         <name>emstryszawski</name>
@@ -23,33 +23,11 @@
         </developer>
     </developers>
 
-    <profiles>
-        <profile>
-            <id>github</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <repositories>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub emstryszawski Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
-
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub emstryszawski Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
+            <url>https://maven.pkg.github.com/${project.organization.name}/*</url>
         </repository>
     </distributionManagement>
 
