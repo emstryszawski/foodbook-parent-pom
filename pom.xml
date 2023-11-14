@@ -4,7 +4,7 @@
     <groupId>org.foodbook.api</groupId>
     <artifactId>foodbook-starter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <inceptionYear>2023</inceptionYear>
     <organization>
         <name>emstryszawski</name>
@@ -38,54 +38,64 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.version>3.0.0</spring.boot.version>
-        <spring.cloud.version>2022.0.0</spring.cloud.version>
-        <spring.feign.version>4.0.0</spring.feign.version>
-        <feign.version>13.0</feign.version>
-        <lombok.version>1.18.30</lombok.version>
-        <eureka.version>4.0.3</eureka.version>
-        <open.api.version>2.1.0</open.api.version>
-        <hibernate.validator.version>8.0.0.Final</hibernate.validator.version>
-        <jwt.api.version>0.11.5</jwt.api.version>
+
+        <foodbook.spring.boot.version>3.0.0</foodbook.spring.boot.version>
+        <foodbook.hibernate.validator.version>8.0.0.Final</foodbook.hibernate.validator.version>
+        <foodbook.eureka.version>4.0.3</foodbook.eureka.version>
+        <foodbook.lombok.version>1.18.30</foodbook.lombok.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--<FOODBOOK>-->
+            <dependency>
+                <groupId>org.foodbook.api</groupId>
+                <artifactId>foodbook-starter-api-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.foodbook.api</groupId>
+                <artifactId>foodbook-starter-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--</FOODBOOK>-->
             <!--<SPRING-BOOT>-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${foodbook.spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${foodbook.spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${foodbook.spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${spring.boot.version}</version>
+                <version>${foodbook.spring.boot.version}</version>
             </dependency>
             <!--</SPRING-BOOT>-->
-            <!--<SPRING-CLOUD>-->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring.cloud.version}</version>
-            </dependency>
-            <!--</SPRING-CLOUD>-->
-            <!--<OPEN-API>-->
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${open.api.version}</version>
-            </dependency>
-            <!--<!OPEN-API>-->
             <!--<HIBERNATE>-->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate.validator.version}</version>
+                <version>${foodbook.hibernate.validator.version}</version>
             </dependency>
             <!--<HIBERNATE>-->
             <!--<EUREKA>-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-                <version>${eureka.version}</version>
+                <version>${foodbook.eureka.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -93,90 +103,21 @@
                 <version>${spring.feign.version}</version>
             </dependency>
             <!--</EUREKA>-->
-            <!--<FEIGN>-->
+            <!--<OTHER>-->
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-openfeign</artifactId>
-                <version>${spring.feign.version}</version>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${foodbook.lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.openfeign</groupId>
-                <artifactId>feign-httpclient</artifactId>
-                <version>${feign.version}</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver-dns-native-macos</artifactId>
+                <version>4.1.90.Final</version>
+                <classifier>osx-x86_64</classifier>
             </dependency>
-            <dependency>
-                <groupId>io.github.openfeign</groupId>
-                <artifactId>feign-okhttp</artifactId>
-                <version>${feign.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.15.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openapitools</groupId>
-                <artifactId>jackson-databind-nullable</artifactId>
-                <version>0.2.6</version>
-            </dependency>
-            <!--<FEIGN>-->
+            <!--</OTHER>-->
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <!--<SPRING-BOOT>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <!--</SPRING-BOOT>-->
-        <!--<JWT>-->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jwt.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jwt.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>${jwt.api.version}</version>
-        </dependency>
-        <!--</JWT>-->
-        <!--<OTHER>-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-resolver-dns-native-macos</artifactId>
-            <version>4.1.90.Final</version>
-            <classifier>osx-x86_64</classifier>
-        </dependency>
-        <!--</OTHER>-->
-    </dependencies>
 
     <build>
         <pluginManagement>
@@ -184,7 +125,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.version}</version>
+                    <version>${foodbook.spring.boot.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
