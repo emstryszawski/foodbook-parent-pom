@@ -4,7 +4,7 @@
     <groupId>org.foodbook.api</groupId>
     <artifactId>foodbook-starter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <inceptionYear>2023</inceptionYear>
     <organization>
         <name>emstryszawski</name>
@@ -100,7 +100,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-                <version>${spring.feign.version}</version>
+                <version>${foodbook.eureka.version}</version>
             </dependency>
             <!--</EUREKA>-->
             <!--<OTHER>-->
