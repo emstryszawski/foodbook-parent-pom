@@ -4,7 +4,7 @@
     <groupId>org.foodbook.api</groupId>
     <artifactId>foodbook-starter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
     <inceptionYear>2023</inceptionYear>
     <organization>
         <name>emstryszawski</name>
@@ -36,6 +36,20 @@
         <url>https://github.com/${project.organization.name}/${project.artifactId}/issues</url>
     </issueManagement>
 
+    <profiles>
+        <profile>
+            <id>mac</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-resolver-dns-native-macos</artifactId>
+                    <version>4.1.90.Final</version>
+                    <classifier>osx-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -45,7 +59,9 @@
         <foodbook.spring.boot.version>3.0.0</foodbook.spring.boot.version>
         <foodbook.hibernate.validator.version>8.0.0.Final</foodbook.hibernate.validator.version>
         <foodbook.eureka.version>4.0.3</foodbook.eureka.version>
+        <foodbook.gson.version>2.10.1</foodbook.gson.version>
         <foodbook.lombok.version>1.18.30</foodbook.lombok.version>
+        <foodbook.openapi.generator.maven.plugin.version>6.2.1</foodbook.openapi.generator.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -55,11 +71,13 @@
                 <groupId>org.foodbook.api</groupId>
                 <artifactId>foodbook-starter-api-client</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.foodbook.api</groupId>
                 <artifactId>foodbook-starter-security</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <!--</FOODBOOK>-->
             <!--<SPRING-BOOT>-->
@@ -75,12 +93,12 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
                 <version>${foodbook.spring.boot.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <artifactId>spring-boot-starter-test</artifactId>
                 <version>${foodbook.spring.boot.version}</version>
             </dependency>
             <!--</SPRING-BOOT>-->
@@ -100,7 +118,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-                <version>${spring.feign.version}</version>
+                <version>${foodbook.eureka.version}</version>
             </dependency>
             <!--</EUREKA>-->
             <!--<OTHER>-->
@@ -109,15 +127,17 @@
                 <artifactId>lombok</artifactId>
                 <version>${foodbook.lombok.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-resolver-dns-native-macos</artifactId>
-                <version>4.1.90.Final</version>
-                <classifier>osx-x86_64</classifier>
-            </dependency>
             <!--</OTHER>-->
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${foodbook.gson.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
@@ -126,6 +146,42 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${foodbook.spring.boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${foodbook.openapi.generator.maven.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-api</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <generatorName>spring</generatorName>
+                                <library>spring-cloud</library>
+
+                                <groupId>${project.groupId}</groupId>
+
+                                <generateApiTests>false</generateApiTests>
+                                <generateModelTests>false</generateModelTests>
+
+                                <invokerPackage>${project.groupId}.ignore</invokerPackage>
+
+                                <configOptions>
+                                    <sourceFolder>src/gen/java/main</sourceFolder>
+                                    <java8>true</java8>
+                                    <dateLibrary>java8</dateLibrary>
+                                    <configPackage>${project.groupId}.ignore</configPackage>
+                                    <useOptional>false</useOptional>
+                                    <useSpringBoot3>true</useSpringBoot3>
+                                </configOptions>
+
+                            </configuration>
+
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
